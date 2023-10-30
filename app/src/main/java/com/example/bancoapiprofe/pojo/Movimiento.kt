@@ -41,8 +41,8 @@ class Movimiento : Serializable {
             fecha operacion: ${formateador.format(fechaOperacion)}
             descripcion: ${descripcion}
             importe: ${importe}
-            id cuenta origen: ${cuentaOrigen!!.getId()}
-            id cuenta destino: ${cuentaDestino!!.getId()}
+            id cuenta origen: ${cuentaOrigen?.getId()}
+            id cuenta destino: ${cuentaDestino?.getId()}
             """.trimIndent()
     }
 

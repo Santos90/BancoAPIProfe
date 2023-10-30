@@ -17,12 +17,12 @@ class MovimientoDAO : PojoDAO {
         val contentValues = ContentValues()
         val c: Movimiento = obj as Movimiento
         contentValues.put("tipo", c.getTipo())
-        contentValues.put("fechaoperacion", c.getFechaOperacion()!!!!.getTime())
+        contentValues.put("fechaoperacion", c.getFechaOperacion()?.getTime() ?: null)
         contentValues.put("descripcion", c.getDescripcion())
         contentValues.put("importe", c.getImporte())
-        contentValues.put("idcuentaorigen", c.getCuentaOrigen()!!.getId())
-        contentValues.put("idcuentadestino", c.getCuentaDestino()!!.getId())
-        return MiBD.dB!!.insert("movimientos", null, contentValues)
+        contentValues.put("idcuentaorigen", c.getCuentaOrigen()?.getId() ?: -1)
+        contentValues.put("idcuentadestino", c.getCuentaDestino()?.getId() ?: -1)
+        return MiBD.dB?.insert("movimientos", null, contentValues) ?: -1
     }
 
     override fun update(obj: Any?): Int {
@@ -35,7 +35,7 @@ class MovimientoDAO : PojoDAO {
         contentValues.put("idcuentaorigen", c.getCuentaOrigen()!!.getId())
         contentValues.put("idcuentadestino", c.getCuentaDestino()!!.getId())
         val condicion = "id=" + String.valueOf(c.getId())
-        return MiBD.dB!!.update("movimientos", contentValues, condicion, null)
+        return MiBD.dB?.update("movimientos", contentValues, condicion, null) ?: -1
     }
 
     override fun delete(obj: Any?) {
@@ -43,7 +43,7 @@ class MovimientoDAO : PojoDAO {
         val condicion = "id=" + String.valueOf(c.getId())
 
         //Se borra el producto indicado en el campo de texto
-        MiBD.dB!!.delete("movimientos", condicion, null)
+        MiBD.dB?.delete("movimientos", condicion, null)
     }
 
     override fun search(obj: Any?): Any? {
@@ -58,9 +58,9 @@ class MovimientoDAO : PojoDAO {
             "idcuentaorigen",
             "idcuentadestino"
         )
-        val cursor: Cursor =
-            MiBD.dB!!.query("movimientos", columnas, condicion, null, null, null, null)
-        return if (cursor.moveToFirst()) {
+        val cursor: Cursor? =
+            MiBD.dB?.query("movimientos", columnas, condicion, null, null, null, null) ?: null
+        return if (cursor?.moveToFirst() == true) {
             c.setId(cursor.getInt(0))
             c.setTipo(cursor.getInt(1))
             c.setFechaOperacion(Date(cursor.getLong(2)))
@@ -70,7 +70,7 @@ class MovimientoDAO : PojoDAO {
             // Asignamos la cuenta de origen
             val a = Cuenta()
             a.setId(cursor.getInt(5))
-            c.setCuentaOrigen(MiBD.getInstance(null)!!.cuentaDAO!!.search(a) as Cuenta)
+            c.setCuentaOrigen(MiBD.getInstance(null)?.cuentaDAO?.search(a) as Cuenta)
 
             // Asignamos la cuenta de destino
             val aux = cursor.getInt(6)
@@ -78,7 +78,7 @@ class MovimientoDAO : PojoDAO {
                 a.setId(-1)
             } else {
                 a.setId(aux)
-                c.setCuentaOrigen(MiBD.getInstance(null)!!.cuentaDAO!!.search(a) as Cuenta)
+                c.setCuentaOrigen(MiBD.getInstance(null)?.cuentaDAO?.search(a) as Cuenta)
             }
             c
         } else {
@@ -97,9 +97,9 @@ class MovimientoDAO : PojoDAO {
             "idcuentaorigen",
             "idcuentadestino"
         )
-        val cursor: Cursor =
-            MiBD.dB!!.query("movimientos", columnas, null, null, null, null, null)
-        if (cursor.moveToFirst()) {
+        val cursor: Cursor? =
+            MiBD.dB?.query("movimientos", columnas, null, null, null, null, null) ?: null
+        if (cursor?.moveToFirst() == true) {
             //Recorremos el cursor hasta que no haya más registros
             do {
                 val c = Movimiento()
@@ -112,7 +112,7 @@ class MovimientoDAO : PojoDAO {
                 // Asignamos la cuenta de origen
                 var a = Cuenta()
                 a.setId(cursor.getInt(5))
-                c.setCuentaOrigen(MiBD.getInstance(null)!!.cuentaDAO!!.search(a) as Cuenta)
+                c.setCuentaOrigen(MiBD.getInstance(null)?.cuentaDAO?.search(a) as Cuenta)
 
 
                 // Asignamos la cuenta de destino
@@ -123,7 +123,7 @@ class MovimientoDAO : PojoDAO {
                     c.setCuentaOrigen(a)
                 } else {
                     a.setId(aux)
-                    c.setCuentaDestino(MiBD.getInstance(null)!!.cuentaDAO!!.search(a) as Cuenta)
+                    c.setCuentaDestino(MiBD.getInstance(null)?.cuentaDAO?.search(a) as Cuenta)
                 }
                 listaMovimientos.add(c)
             } while (cursor.moveToNext())
@@ -133,7 +133,7 @@ class MovimientoDAO : PojoDAO {
 
     fun getMovimientos(cuenta: Cuenta?): ArrayList<*> {
         val listaMovimientos: ArrayList<Movimiento> = ArrayList<Movimiento>()
-        val condicion = "idcuentaorigen=" + String.valueOf(cuenta!!.getId())
+        val condicion = "idcuentaorigen=" + String.valueOf(cuenta?.getId() ?: -1)
         val columnas = arrayOf(
             "id",
             "tipo",
@@ -143,9 +143,9 @@ class MovimientoDAO : PojoDAO {
             "idcuentaorigen",
             "idcuentadestino"
         )
-        val cursor: Cursor =
-            MiBD.dB!!.query("movimientos", columnas, condicion, null, null, null, null)
-        if (cursor.moveToFirst()) {
+        val cursor: Cursor? =
+            MiBD.dB?.query("movimientos", columnas, condicion, null, null, null, null) ?: null
+        if (cursor?.moveToFirst() == true) {
             //Recorremos el cursor hasta que no haya más registros
             do {
                 val c = Movimiento()
@@ -167,7 +167,7 @@ class MovimientoDAO : PojoDAO {
                     c.setCuentaDestino(a)
                 } else {
                     a.setId(aux)
-                    a = MiBD.getInstance(null)!!.cuentaDAO!!.search(a) as Cuenta
+                    a = MiBD.getInstance(null)?.cuentaDAO?.search(a) as Cuenta
                     c.setCuentaDestino(a)
                 }
                 listaMovimientos.add(c)
@@ -179,7 +179,7 @@ class MovimientoDAO : PojoDAO {
     fun getMovimientosTipo(cuenta: Cuenta?, tipo: Int): ArrayList<*> {
         val listaMovimientos: ArrayList<Movimiento> = ArrayList<Movimiento>()
         val condicion =
-            "idcuentaorigen=" + String.valueOf(cuenta!!.getId()) + " AND tipo = " + tipo.toString()
+            "idcuentaorigen=" + String.valueOf(cuenta?.getId() ?: -1) + " AND tipo = " + tipo.toString()
         val columnas = arrayOf(
             "id",
             "tipo",
@@ -189,9 +189,9 @@ class MovimientoDAO : PojoDAO {
             "idcuentaorigen",
             "idcuentadestino"
         )
-        val cursor: Cursor =
-            MiBD.dB!!.query("movimientos", columnas, condicion, null, null, null, null)
-        if (cursor.moveToFirst()) {
+        val cursor: Cursor? =
+            MiBD.dB?.query("movimientos", columnas, condicion, null, null, null, null) ?: null
+        if (cursor?.moveToFirst() == true) {
             //Recorremos el cursor hasta que no haya más registros
             do {
                 val c = Movimiento()
@@ -213,7 +213,7 @@ class MovimientoDAO : PojoDAO {
                     c.setCuentaDestino(a)
                 } else {
                     a.setId(aux)
-                    a = MiBD.getInstance(null)!!.cuentaDAO!!.search(a) as Cuenta
+                    a = MiBD.getInstance(null)?.cuentaDAO?.search(a) as Cuenta
                     c.setCuentaDestino(a)
                 }
                 listaMovimientos.add(c)

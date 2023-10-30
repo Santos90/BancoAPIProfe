@@ -22,7 +22,7 @@ class CuentaDAO : PojoDAO {
         contentValues.put("numerocuenta", c.getNumeroCuenta())
         contentValues.put("idcliente", c.getCliente()!!.getId())
         contentValues.put("saldoactual", c.getSaldoActual())
-        return MiBD.dB!!.insert("cuentas", null, contentValues)
+        return MiBD.dB?.insert("cuentas", null, contentValues) ?: -1
     }
 
     override fun update(obj: Any?): Int {
@@ -35,7 +35,7 @@ class CuentaDAO : PojoDAO {
         contentValues.put("saldoactual", c.getSaldoActual())
         contentValues.put("idcliente", c.getCliente()!!.getId())
         val condicion = "id=" + String.valueOf(c.getId())
-        return MiBD.dB!!.update("cuentas", contentValues, condicion, null)
+        return MiBD.dB?.update("cuentas", contentValues, condicion, null) ?:-1
     }
 
     override fun delete(obj: Any?) {
@@ -60,9 +60,9 @@ class CuentaDAO : PojoDAO {
         val columnas = arrayOf(
             "id", "banco", "sucursal", "dc", "numerocuenta", "saldoactual", "idcliente"
         )
-        val cursor: Cursor =
-            MiBD.dB!!.query("cuentas", columnas, condicion, null, null, null, null)
-        return if (cursor.moveToFirst()) {
+        val cursor: Cursor? =
+            MiBD.dB?.query("cuentas", columnas, condicion, null, null, null, null) ?: null
+        return if (cursor?.moveToFirst() == true) {
             c.setId(cursor.getInt(0))
             c.setBanco(cursor.getString(1))
             c.setSucursal(cursor.getString(2))
@@ -73,7 +73,7 @@ class CuentaDAO : PojoDAO {
             // Obtenemos el cliente y lo asignamos
             var a = Cliente()
             a.setId(cursor.getInt(6))
-            a = MiBD.getInstance(null)!!.clienteDAO!!.search(a) as Cliente
+            a = MiBD.getInstance(null)?.clienteDAO?.search(a) as Cliente
             c.setCliente(a)
 
             // Obtenemos la lista de movimientos y los asignamos
@@ -89,8 +89,8 @@ class CuentaDAO : PojoDAO {
         val columnas = arrayOf(
             "id", "banco", "sucursal", "dc", "numerocuenta", "saldoactual", "idcliente"
         )
-        val cursor: Cursor = MiBD.dB!!.query("cuentas", columnas, null, null, null, null, null)
-        if (cursor.moveToFirst()) {
+        val cursor: Cursor? = MiBD.dB?.query("cuentas", columnas, null, null, null, null, null) ?: null
+        if (cursor?.moveToFirst() == true) {
             //Recorremos el cursor hasta que no haya más registros
             do {
                 val c = Cuenta()
@@ -104,7 +104,7 @@ class CuentaDAO : PojoDAO {
                 // Obtenemos el cliente y lo asignamos
                 var a = Cliente()
                 a.setId(cursor.getInt(6))
-                a = MiBD.getInstance(null)!!.clienteDAO!!.search(a) as Cliente
+                a = MiBD.getInstance(null)?.clienteDAO!!.search(a) as Cliente
                 c.setCliente(a)
 
                 // Obtenemos la lista de movimientos y los asignamos
@@ -121,9 +121,9 @@ class CuentaDAO : PojoDAO {
         val columnas = arrayOf(
             "id", "banco", "sucursal", "dc", "numerocuenta", "saldoactual", "idcliente"
         )
-        val cursor: Cursor =
-            MiBD.dB!!.query("cuentas", columnas, condicion, null, null, null, null)
-        if (cursor.moveToFirst()) {
+        val cursor: Cursor? =
+            MiBD.dB?.query("cuentas", columnas, condicion, null, null, null, null) ?: null
+        if (cursor?.moveToFirst() == true) {
             //Recorremos el cursor hasta que no haya más registros
             do {
                 val c = Cuenta()

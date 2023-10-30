@@ -40,7 +40,7 @@ class Cuenta : Serializable {
                sucursal: ${sucursal}
                dc: ${dc}
                numero cuenta: ${numeroCuenta}
-               id cliente: ${cliente!!.getId()}
+               id cliente: ${cliente?.getId()}
                saldo actual: ${saldoActual}
                """.trimIndent()
     }

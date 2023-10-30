@@ -21,10 +21,10 @@ class ClienteDAO : PojoDAO {
         contentValues.put("apellidos", c.getApellidos())
         contentValues.put("claveSeguridad", c.getClaveSeguridad())
         contentValues.put("email", c.getEmail())
-        return MiBD.dB!!.insert("clientes", null, contentValues)
+        return MiBD.dB?.insert("clientes", null, contentValues) ?: -1
     }
 
-    override fun update(obj: Any?): Int {
+    override fun update(obj: Any?): Int? {
         val contentValues = ContentValues()
         val c: Cliente = obj as Cliente
         contentValues.put("nif", c.getNif())
@@ -33,7 +33,7 @@ class ClienteDAO : PojoDAO {
         contentValues.put("claveSeguridad", c.getClaveSeguridad())
         contentValues.put("email", c.getEmail())
         val condicion = "id=" + String.valueOf(c.getId())
-        return MiBD.dB!!.update("clientes", contentValues, condicion, null)
+        return MiBD.dB?.update("clientes", contentValues, condicion, null)
     }
 
     override fun delete(obj: Any?) {
@@ -41,7 +41,7 @@ class ClienteDAO : PojoDAO {
         val condicion = "id=" + String.valueOf(c.getId())
 
         //Se borra el cliente indicado en el campo de texto
-        MiBD.dB!!.delete("clientes", condicion, null)
+        MiBD.dB?.delete("clientes", condicion, null)
     }
 
     override fun search(obj: Any?): Any? {
@@ -55,10 +55,10 @@ class ClienteDAO : PojoDAO {
         val columnas = arrayOf(
             "id", "nif", "nombre", "apellidos", "claveseguridad", "email"
         )
-        val cursor: Cursor =
-            MiBD.dB!!.query("clientes", columnas, condicion, null, null, null, null)
+        val cursor: Cursor? =
+            MiBD.dB?.query("clientes", columnas, condicion, null, null, null, null) ?:null
         var nuevoCliente: Cliente? = null
-        if (cursor.moveToFirst()) {
+        if (cursor?.moveToFirst() == true) {
             nuevoCliente = Cliente()
             nuevoCliente.setId(cursor.getInt(0))
             nuevoCliente.setNif(cursor.getString(1))
@@ -79,23 +79,23 @@ class ClienteDAO : PojoDAO {
     override fun getAll(): ArrayList<*>? {
         val listaClientes = ArrayList<Cliente>()
         val columnas = arrayOf("id", "nif", "nombre", "apellidos", "claveseguridad", "email")
-        val cursor = MiBD.dB!!.query("clientes", columnas, null, null, null, null, null)
+        val cursor = MiBD.dB?.query("clientes", columnas, null, null, null, null, null)
         val cuentaDAO = CuentaDAO()
 
-        if (cursor.moveToFirst()) {
+        if (cursor?.moveToFirst() == true) {
             do {
                 val c = Cliente()
-                c.setId(cursor.getInt(0))
-                c.setNif(cursor.getString(1))
-                c.setNombre(cursor.getString(2))
-                c.setApellidos(cursor.getString(3))
-                c.setClaveSeguridad(cursor.getString(4))
-                c.setClaveSeguridad(cursor.getString(5))
+                cursor?.let { c.setId(it.getInt(0)) }
+                c.setNif(cursor?.getString(1))
+                c.setNombre(cursor?.getString(2))
+                c.setApellidos(cursor?.getString(3))
+                c.setClaveSeguridad(cursor?.getString(4))
+                c.setClaveSeguridad(cursor?.getString(5))
                 // c.listaCuentas = MiBD.getInstance(null).getCuentaDAO().getCuentas(c)
                 listaClientes.add(c)
-            } while (cursor.moveToNext())
+            } while (cursor?.moveToNext() == true)
         }
-        cursor.close()
+        cursor?.close()
         return listaClientes
     }
 

@@ -15,7 +15,7 @@ class MiBancoOperacional protected constructor(context: Context?) {
     // Operacion Login: Verifica que el cliente existe y que su contraseña es correcta. Recibira un cliente
     // que solo contendrá el nif y la password.
     fun login(c: Cliente): Cliente? {
-        val aux: Cliente = miBD?.clienteDAO!!.search(c) as Cliente
+        val aux: Cliente = miBD?.clienteDAO?.search(c) as Cliente
         return if (aux == null) {
             null
         } else if (aux.getClaveSeguridad().equals(c.getClaveSeguridad())) {
@@ -29,7 +29,7 @@ class MiBancoOperacional protected constructor(context: Context?) {
     // Si devuelve un 1 es que ha verificado el cambio de password como correcto y todo ha ido bien, mientras que si devuelve
     // mientras que si devuelve un 0 no ha verificado el cambio de password como correcto y ha habido un error al cambiarlo.
     fun changePassword(c: Cliente?): Int {
-        val resultado: Int = miBD?.clienteDAO!!.update(c)!!
+        val resultado: Int? = miBD?.clienteDAO?.update(c)
         return if (resultado == 0) {
             0
         } else {
@@ -38,14 +38,16 @@ class MiBancoOperacional protected constructor(context: Context?) {
     }
 
     // Operacion getCuentas: Obtiene un ArrayList de las cuentas de un cliente que recibe como parámetro
-    fun getCuentas(c: Cliente?): ArrayList<*> {
-        return miBD?.cuentaDAO!!.getCuentas(c)!!
+    fun getCuentas(c: Cliente?): ArrayList<*>? {
+        return miBD?.cuentaDAO?.getCuentas(c)
     }
 
     // Operacion getMovimientos: Obtiene un ArrayList de los movimientos de una cuenta que recibe como parámetro
-    fun getMovimientos(c: Cuenta?): ArrayList<*> {
-        return miBD?.movimientoDAO!!.getMovimientos(c) !!
+    fun getMovimientos(c: Cuenta?): ArrayList<*>? {
+        return miBD?.movimientoDAO?.getMovimientos(c)
     }
+
+
 
     /* Operacion transferencia: Desde una cuenta hace transferencia a otra cuenta, siempre que en la cuenta origen haya dinero disponible.
 
@@ -67,7 +69,7 @@ class MiBancoOperacional protected constructor(context: Context?) {
 
     // Operacion getMovimientosTipo: Obtiene un ArrayList de los movimientos de un tipo específico de una cuenta que recibe como parámetro
     fun getMovimientosTipo(c: Cuenta?, tipo: Int): ArrayList<*> {
-        return miBD?.movimientoDAO!!.getMovimientosTipo(c, tipo)!!
+        return miBD?.movimientoDAO?.getMovimientosTipo(c, tipo) ?: ArrayList<Movimiento>()
     }
 
     companion object {
