@@ -32,7 +32,11 @@ class ClienteDAO : PojoDAO {
         contentValues.put("apellidos", c.getApellidos())
         contentValues.put("claveSeguridad", c.getClaveSeguridad())
         contentValues.put("email", c.getEmail())
-        val condicion = "id=" + String.valueOf(c.getId())
+        val condicion = if (TextUtils.isEmpty(c.getNif())) {
+            "id=" + String.valueOf(c.getId())
+        } else {
+            "nif=" + "'" + c.getNif() + "'"
+        }
         return MiBD.dB?.update("clientes", contentValues, condicion, null)
     }
 
